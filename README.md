@@ -69,7 +69,7 @@ We welcome contributions to enhance the bot's functionality or to include more j
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ## Contact
 

@@ -15,7 +15,7 @@ EvacX bot is an automated solution designed to enhance the visibility of recent 
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/EvacX-bot.git
+   git clone https://github.com/pozapas/EvacX.git
    cd EvacX-bot
    ```
 

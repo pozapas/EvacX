@@ -1,0 +1,6 @@
+
+tweepy
+feedparser
+requests
+Pillow
+spacy

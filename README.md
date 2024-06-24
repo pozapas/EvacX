@@ -62,6 +62,8 @@ The bot monitors new publications from the following journals:
 - International Journal of Disaster Risk Reduction
 - Physica A
 - Transportation Research Part A, B, C, D, and F
+- Environmental Hazards
+- Transportation Planning and Technology
 
 ## Contributing
 

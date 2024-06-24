@@ -15,7 +15,7 @@ EvacX bot is an automated solution designed to enhance the visibility of recent 
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/EvacX-bot.git
+   git clone https://github.com/pozapas/EvacX.git
    cd EvacX-bot
    ```
 
@@ -71,7 +71,7 @@ We welcome contributions to enhance the bot's functionality or to include more j
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ## Contact
 

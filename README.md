@@ -1,13 +1,13 @@
 
 # EvacX Bot
 
-EvacX bot is an automated solution designed to enhance the visibility of recent research publications in the field of crowd evacuation. The app automates the process of discovering, summarizing, and disseminating new research findings through Twitter, ensuring timely and consistent updates for the academic and professional communities.
+EvacX bot is an automated solution designed to enhance the visibility of recent research publications in the field of crowd evacuation. The app automates the process of discovering, summarizing, and disseminating new research findings through X, ensuring timely and consistent updates for the academic and professional communities.
 
 ## Features
 
 - Automatically discovers new research publications from multiple journals.
 - Summarizes the research findings.
-- Disseminates the summaries through Twitter.
+- Disseminates the summaries through X.
 - Ensures timely and consistent updates.
 
 ## Setup and Installation
@@ -29,16 +29,16 @@ EvacX bot is an automated solution designed to enhance the visibility of recent 
 
 3. **Configure API Keys**
 
-   You need to set up your API keys for Twitter and Stable Diffusion. Update the following variables in `EvacX.py` with your credentials:
+   You need to set up your API keys for X and Stable Diffusion. Update the following variables in `EvacX.py` with your credentials:
 
    ```python
-   api_key = 'YOUR_TWITTER_API_KEY'
-   api_key_secret = 'YOUR_TWITTER_API_KEY_SECRET'
-   access_token = 'YOUR_TWITTER_ACCESS_TOKEN'
-   access_token_secret = 'YOUR_TWITTER_ACCESS_TOKEN_SECRET'
-   client_id = 'YOUR_TWITTER_CLIENT_ID'
-   client_secret = 'YOUR_TWITTER_CLIENT_SECRET'
-   bearer_token = 'YOUR_TWITTER_BEARER_TOKEN'
+   api_key = 'YOUR_X_API_KEY'
+   api_key_secret = 'YOUR_X_API_KEY_SECRET'
+   access_token = 'YOUR_X_ACCESS_TOKEN'
+   access_token_secret = 'YOUR_X_ACCESS_TOKEN_SECRET'
+   client_id = 'YOUR_X_CLIENT_ID'
+   client_secret = 'YOUR_X_CLIENT_SECRET'
+   bearer_token = 'YOUR_X_BEARER_TOKEN'
    STABILITY_KEY = 'YOUR_STABLE_DIFFUSION_API_KEY'
    ```
 
@@ -79,4 +79,4 @@ For any inquiries or suggestions, please contact amir.rafe@usu.edu.
 
 ---
 
-Check out the EvacX Twitter account [here](https://x.com/EvacuationModel).
+Check out the EvacX X account [here](https://x.com/EvacuationModel).

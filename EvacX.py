@@ -167,12 +167,12 @@ def create_and_post_tweet_with_image(paper, journal, keyword, emoji):
         title_with_hashtag = title.replace(keyword_lower, f"#{keyword_lower}")
         title_with_hashtag = title_with_hashtag.replace(keyword.capitalize(), f"#{keyword_lower}")
         
-        tweet_text = f"#EcavPaperAlert: {title_with_hashtag} {emoji}\nJust published on #{journal.replace(' ', '')}\n\n🔗 Link: {short_url}"
+        tweet_text = f"#EvacPaperAlert: {title_with_hashtag} {emoji}\nJust published on #{journal.replace(' ', '')}\n\n🔗 Link: {short_url}"
         
         if len(tweet_text) > 280:
             excess = len(tweet_text) - 277
             title_with_hashtag = title_with_hashtag[:-excess] + "..."
-            tweet_text = f"#EcavPaperAlert: {title_with_hashtag} {emoji}\nJust published on #{journal.replace(' ', '')}\n\n🔗 Link: {short_url}"
+            tweet_text = f"#EvacPaperAlert: {title_with_hashtag} {emoji}\nJust published on #{journal.replace(' ', '')}\n\n🔗 Link: {short_url}"
         
         image_prompt = create_image_prompt(title)
         image_data = generate_image_stable_diffusion(image_prompt)

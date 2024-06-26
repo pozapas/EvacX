@@ -55,6 +55,9 @@ rss_feeds = {
     "Transportation Planning and Technology" : "https://www.tandfonline.com/feed/rss/gtpt20",
     "Tunnelling and Underground Space Technology" : "https://rss.sciencedirect.com/publication/science/08867798",
     "Developments in the Built Environment" : "https://rss.sciencedirect.com/publication/science/26661659",
+    "Journal of Transport Geography" : "https://rss.sciencedirect.com/publication/science/09666923",
+    "Journal of Building Engineering" : "https://rss.sciencedirect.com/publication/science/23527102",
+    "Reliability Engineering & System Safety" : "https://rss.sciencedirect.com/publication/science/09518320",
 }
 
 # List of relevant emojis

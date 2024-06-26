@@ -53,6 +53,8 @@ rss_feeds = {
     "Transportation Research Part F" : "https://rss.sciencedirect.com/publication/science/13698478",
     "Environmental Hazards" : "https://www.tandfonline.com/feed/rss/tenh20",
     "Transportation Planning and Technology" : "https://www.tandfonline.com/feed/rss/gtpt20",
+    "Tunnelling and Underground Space Technology" : "https://rss.sciencedirect.com/publication/science/08867798",
+    "Developments in the Built Environment" : "https://rss.sciencedirect.com/publication/science/26661659",
 }
 
 # List of relevant emojis

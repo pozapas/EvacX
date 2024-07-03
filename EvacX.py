@@ -58,6 +58,11 @@ rss_feeds = {
     "Journal of Transport Geography" : "https://rss.sciencedirect.com/publication/science/09666923",
     "Journal of Building Engineering" : "https://rss.sciencedirect.com/publication/science/23527102",
     "Reliability Engineering & System Safety" : "https://rss.sciencedirect.com/publication/science/09518320",
+    "Heliyon": "https://rss.sciencedirect.com/publication/science/24058440",
+    "Simulation Modelling Practice and Theory" : "https://rss.sciencedirect.com/publication/science/1569190X",
+    "Journal of Safety Science and Resilience": "https://rss.sciencedirect.com/publication/science/26664496",
+    "Ocean Engineering" : "https://rss.sciencedirect.com/publication/science/00298018",
+    "International Journal of Rail Transportation": "https://www.tandfonline.com/feed/rss/tjrt20",
 }
 
 # List of relevant emojis

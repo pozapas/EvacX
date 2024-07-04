@@ -1,4 +1,6 @@
 #EvacX bot
+
+# Import necessary libraries
 import tweepy
 import feedparser
 import requests
@@ -6,8 +8,8 @@ import random
 import json
 from datetime import datetime
 import spacy
+import re
 from PIL import Image
-import time
 import os
 
 # Twitter API credentials
@@ -21,6 +23,15 @@ bearer_token = 'XXX'
 
 # Stable Diffusion API key
 STABILITY_KEY = 'XXX'
+
+# Elsevier API key
+elsevier_api_key = 'XXX'
+
+# Groq API key
+groq_api_key = "XXX"
+
+# Groq model ID
+groq_model_id = "gemma-7b-it"
 
 # Setup Tweepy Client authentication
 client = tweepy.Client(
@@ -169,6 +180,60 @@ def generate_image_stable_diffusion(prompt):
         print(f"Error generating image: {e}")
         return None
 
+def get_pii_from_url(url):
+    pii_pattern = r'(?<=pii/)[^?/]+'
+    pii_match = re.search(pii_pattern, url)
+    if pii_match:
+        return pii_match.group(0)
+    else:
+        return None
+
+def fetch_abstract_from_elsevier(pii):
+    url = f'https://api.elsevier.com/content/article/pii/{pii}'
+    headers = {
+        'X-ELS-APIKey': elsevier_api_key,
+        'Accept': 'application/json'
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        title = data['full-text-retrieval-response']['coredata']['dc:title']
+        abstract = data['full-text-retrieval-response']['coredata']['dc:description']
+        return title, abstract
+    else:
+        print(f"Failed to retrieve document details. Status code: {response.status_code}")
+        return None, None
+
+def generate_summary_tweet(abstract_text):
+    groq_endpoint = "https://api.groq.com/openai/v1/chat/completions"
+    prompt = f"""Summarize the key findings from this research abstract in a tweet of a 280 characters, be sure it should not more than 280 character:
+    Abstract: {abstract_text}
+    """
+    payload = {
+        "model": groq_model_id,
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": 150,
+        "temperature": 0,
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {groq_api_key}",
+    }
+    response = requests.post(groq_endpoint, json=payload, headers=headers)
+    if response.status_code == 200:
+        tweet = response.json()["choices"][0]["message"]["content"]
+        # Remove any asterisks
+        tweet = tweet.replace('*', '')
+
+        # Ensure the tweet does not exceed 250 characters
+        if len(tweet) > 280:
+            tweet = tweet[:277] + "..."
+        return tweet
+    else:
+        print(f"Error: {response.status_code} - {response.text}")
+        return None
+
+
 def create_and_post_tweet_with_image(paper, journal, keyword, emoji):
     try:
         short_url = shorten_url(paper['link'])
@@ -199,21 +264,42 @@ def create_and_post_tweet_with_image(paper, journal, keyword, emoji):
             
             if hasattr(response, 'data'):
                 print(f"Tweet posted successfully: {tweet_text}")
-                return True
+                return response.data['id']
             else:
                 print(f"Failed to post tweet. Response: {response}")
-                return False
+                return None
         else:
             print("Failed to generate image. Posting tweet without image.")
             response = client.create_tweet(text=tweet_text)
             if hasattr(response, 'data'):
                 print(f"Tweet posted successfully (without image): {tweet_text}")
-                return True
+                return response.data['id']
             else:
                 print(f"Failed to post tweet. Response: {response}")
-                return False
+                return None
     except Exception as e:
         print(f"An error occurred while posting tweet: {e}")
+        return None
+
+def create_thread_tweet(parent_tweet_id, text):
+    try:
+        if len(text) > 280:
+            text = text[:277]
+            # Ensure we don't cut off mid-word
+            if text[-1] != ' ' and text[-2] != ' ':
+                last_space = text.rfind(' ')
+                if last_space != -1:
+                    text = text[:last_space]
+            text += "..."
+        response = client.create_tweet(text=text, in_reply_to_tweet_id=parent_tweet_id)
+        if hasattr(response, 'data'):
+            print(f"Thread tweet posted successfully: {text}")
+            return True
+        else:
+            print(f"Failed to post thread tweet. Response: {response}")
+            return False
+    except Exception as e:
+        print(f"An error occurred while posting thread tweet: {e}")
         return False
 
 if __name__ == "__main__":
@@ -228,12 +314,22 @@ if __name__ == "__main__":
         
         for paper in new_papers:
             emoji = random.choice(emojis)
-            if create_and_post_tweet_with_image(paper, journal, keyword, emoji):
+            tweet_id = create_and_post_tweet_with_image(paper, journal, keyword, emoji)
+            
+            if tweet_id:
                 posted_papers[paper['link']] = {
                     'title': paper['title'],
                     'posted_date': datetime.now().isoformat(),
                     'journal': journal
                 }
+                
+                pii = get_pii_from_url(paper['link'])
+                if pii:
+                    title, abstract = fetch_abstract_from_elsevier(pii)
+                    if abstract:
+                        summary_tweet = generate_summary_tweet(abstract)
+                        if summary_tweet:
+                            create_thread_tweet(tweet_id, summary_tweet)
 
     save_posted_papers(posted_papers)
     print("RSS feed processing completed.")

@@ -40,6 +40,8 @@ EvacX bot is an automated solution designed to enhance the visibility of recent 
    client_secret = 'YOUR_X_CLIENT_SECRET'
    bearer_token = 'YOUR_X_BEARER_TOKEN'
    STABILITY_KEY = 'YOUR_STABLE_DIFFUSION_API_KEY'
+   elsevier_api_key = 'YOUR_ELSEVIER_API_KEY'
+   groq_api_key = 'YOUR_GROQ_API_KEY'
    ```
 
 4. **Run the Bot**
@@ -64,6 +66,16 @@ The bot monitors new publications from the following journals:
 - Transportation Research Part A, B, C, D, and F
 - Environmental Hazards
 - Transportation Planning and Technology
+- Tunnelling and Underground Space Technology
+- Developments in the Built Environment
+- Journal of Transport Geography
+- Journal of Building Engineering
+- Reliability Engineering & System Safety
+- Heliyon
+- Simulation Modelling Practice and Theory
+- Journal of Safety Science and Resilience
+- Ocean Engineering
+- International Journal of Rail Transportation
 
 ## Contributing
 

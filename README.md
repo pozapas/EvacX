@@ -76,6 +76,7 @@ The bot monitors new publications from the following journals:
 - Journal of Safety Science and Resilience
 - Ocean Engineering
 - International Journal of Rail Transportation
+- Transportation Research Record
 
 ## Contributing
 

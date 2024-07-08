@@ -11,6 +11,7 @@ import spacy
 import re
 from PIL import Image
 import os
+import html
 
 # Twitter API credentials
 api_key = 'XXX'
@@ -74,6 +75,7 @@ rss_feeds = {
     "Journal of Safety Science and Resilience": "https://rss.sciencedirect.com/publication/science/26664496",
     "Ocean Engineering" : "https://rss.sciencedirect.com/publication/science/00298018",
     "International Journal of Rail Transportation": "https://www.tandfonline.com/feed/rss/tjrt20",
+    "Transportation Research Record": "https://journals.sagepub.com/action/showFeed?ui=0&mi=ehikzz&ai=2b4&jc=trra&type=etoc&feed=rss",
 }
 
 # List of relevant emojis
@@ -101,12 +103,23 @@ def check_new_papers(feed_url, keyword, posted_papers):
     papers = []
     for entry in feed.entries:
         if keyword.lower() in entry.title.lower() and entry.link not in posted_papers:
+            description_content = None
+            
+            # Specific handling for Transportation Research Record
+            if 'journals.sagepub.com' in feed_url:
+                description_html = html.unescape(entry.description)
+                parts = description_html.split("<br />")
+                description_content = parts[1].strip() if len(parts) > 1 else "Abstract not available."
+
             papers.append({
                 "title": entry.title,
                 "link": entry.link,
-                "published": entry.get('published', datetime.now().isoformat())
+                "published": entry.get('published', datetime.now().isoformat()),
+                "description": description_content
             })
     return papers
+
+
 
 def shorten_url(url):
     try:
@@ -206,7 +219,7 @@ def fetch_abstract_from_elsevier(pii):
 
 def generate_summary_tweet(abstract_text):
     groq_endpoint = "https://api.groq.com/openai/v1/chat/completions"
-    prompt = f"""Summarize the key findings from this research abstract in a tweet of a 280 characters, be sure it should not more than 280 character:
+    prompt = f"""Summarize the key findings from this research abstract in a tweet of a 270 characters, be sure it should not more than 275 character and don't use bullet points:
     Abstract: {abstract_text}
     """
     payload = {
@@ -223,7 +236,7 @@ def generate_summary_tweet(abstract_text):
     if response.status_code == 200:
         tweet = response.json()["choices"][0]["message"]["content"]
         # Remove any asterisks
-        tweet = tweet.replace('*', '')
+        tweet = tweet.replace('***', '').replace('**', '').replace('*', '').replace('##', '').replace('###', '')
 
         # Ensure the tweet does not exceed 250 characters
         if len(tweet) > 280:
@@ -264,7 +277,31 @@ def create_and_post_tweet_with_image(paper, journal, keyword, emoji):
             
             if hasattr(response, 'data'):
                 print(f"Tweet posted successfully: {tweet_text}")
-                return response.data['id']
+                tweet_id = response.data['id']
+                
+                # Initialize abstract_text to avoid reference before assignment
+                abstract_text = None
+                
+                # Check for Transportation Research Record and use description if available
+                if 'Transportation Research Record' in journal and paper['description']:
+                    abstract_text = paper['description']
+                else:
+                    # Fetch abstract from Elsevier API if available
+                    pii = get_pii_from_url(paper['link'])
+                    if pii:
+                        _, fetched_abstract = fetch_abstract_from_elsevier(pii)
+                        if fetched_abstract:
+                            abstract_text = fetched_abstract
+
+                # Only proceed with summary and threading if abstract_text is not None
+                if abstract_text:
+                    summary_tweet = generate_summary_tweet(abstract_text)
+                    if summary_tweet:
+                        create_thread_tweet(tweet_id, summary_tweet)
+                else:
+                    print("No abstract available to create a summary tweet.")
+
+                return tweet_id
             else:
                 print(f"Failed to post tweet. Response: {response}")
                 return None
@@ -280,6 +317,7 @@ def create_and_post_tweet_with_image(paper, journal, keyword, emoji):
     except Exception as e:
         print(f"An error occurred while posting tweet: {e}")
         return None
+
 
 def create_thread_tweet(parent_tweet_id, text):
     try:
@@ -301,7 +339,7 @@ def create_thread_tweet(parent_tweet_id, text):
     except Exception as e:
         print(f"An error occurred while posting thread tweet: {e}")
         return False
-
+    
 if __name__ == "__main__":
     keyword = "evacuation"
     posted_papers = load_posted_papers()

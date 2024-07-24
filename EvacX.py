@@ -76,6 +76,7 @@ rss_feeds = {
     "Ocean Engineering" : "https://rss.sciencedirect.com/publication/science/00298018",
     "International Journal of Rail Transportation": "https://www.tandfonline.com/feed/rss/tjrt20",
     "Transportation Research Record": "https://journals.sagepub.com/action/showFeed?ui=0&mi=ehikzz&ai=2b4&jc=trra&type=etoc&feed=rss",
+    "Simulation": "https://journals.sagepub.com/action/showFeed?ui=0&mi=ehikzz&ai=2b4&jc=simb&type=axatoc&feed=rss",
 }
 
 # List of relevant emojis
@@ -293,6 +294,17 @@ def create_and_post_tweet_with_image(paper, journal, keyword, emoji):
                         if fetched_abstract:
                             abstract_text = fetched_abstract
 
+                # Check for Simulation and use description if available
+                if 'Simulation' in journal and paper['description']:
+                    abstract_text = paper['description']
+                else:
+                    # Fetch abstract from Elsevier API if available
+                    pii = get_pii_from_url(paper['link'])
+                    if pii:
+                        _, fetched_abstract = fetch_abstract_from_elsevier(pii)
+                        if fetched_abstract:
+                            abstract_text = fetched_abstract
+                            
                 # Only proceed with summary and threading if abstract_text is not None
                 if abstract_text:
                     summary_tweet = generate_summary_tweet(abstract_text)
